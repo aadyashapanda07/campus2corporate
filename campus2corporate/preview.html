@@ -1,0 +1,1807 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus2Corporate | Interactive AI Placement Prep Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    /* --- CSS DESIGN SYSTEM (Tailwind-equivalent custom variables) --- */
+    :root {
+      --bg-color: #F8FAFC;
+      --card-bg: #FFFFFF;
+      --border-color: #E2E8F0;
+      --text-main: #0F172A;
+      --text-muted: #64748B;
+      --primary: #357AE8;
+      --primary-hover: #1A5FCE;
+      --accent-cyan: #06B6D4;
+      --accent-emerald: #10B981;
+      --accent-rose: #F43F5E;
+      --accent-amber: #F59E0B;
+      --accent-bg-amber: #FEF3C7;
+      --accent-bg-blue: #DBEAFE;
+      --accent-bg-rose: #FFE4E6;
+    }
+
+    html.dark {
+      --bg-color: #0B0F19;
+      --card-bg: #161F30;
+      --border-color: #23324A;
+      --text-main: #F1F5F9;
+      --text-muted: #94A3B8;
+      --primary: #3B82F6;
+      --primary-hover: #2563EB;
+      --accent-cyan: #22D3EE;
+      --accent-emerald: #34D399;
+      --accent-rose: #FB7185;
+      --accent-amber: #FBBF24;
+      --accent-bg-amber: rgba(251, 191, 36, 0.15);
+      --accent-bg-blue: rgba(59, 130, 246, 0.15);
+      --accent-bg-rose: rgba(251, 113, 133, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Outfit', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow-x: hidden;
+    }
+
+    .max-width-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      width: 100%;
+    }
+
+    .glass-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 1.5rem;
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Header Nav Bar Styling */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    html.dark header {
+      background: rgba(11, 15, 25, 0.85);
+    }
+
+    .nav-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 70px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+      color: var(--primary);
+      text-decoration: none;
+      background: linear-gradient(to right, #3B82F6, #06B6D4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-menu {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .nav-link {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.875rem;
+      padding: 0.5rem 0.875rem;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: var(--primary);
+      background: var(--accent-bg-blue);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.875rem;
+    }
+
+    .theme-toggle, .btn-icon {
+      background: none;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 0.5rem;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .theme-toggle:hover, .btn-icon:hover {
+      background: var(--border-color);
+      color: var(--text-main);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      font-weight: 700;
+      font-size: 0.875rem;
+      padding: 0.6rem 1.25rem;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    /* Views switches */
+    main {
+      flex-grow: 1;
+      padding: 2.5rem 0;
+    }
+
+    .view-section {
+      display: none;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .view-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Hero */
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      align-items: center;
+      text-align: center;
+    }
+
+    @media (min-width: 992px) {
+      .hero-grid {
+        grid-template-columns: 7fr 5fr;
+        text-align: left;
+      }
+    }
+
+    .hero-content {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 0.875rem;
+      border-radius: 50px;
+      background: var(--accent-bg-blue);
+      color: var(--primary);
+      font-size: 0.75rem;
+      font-weight: 700;
+      width: fit-content;
+      margin: 0 auto;
+    }
+
+    @media (min-width: 992px) {
+      .badge-pill {
+        margin: 0;
+      }
+    }
+
+    .hero-title {
+      font-size: 2.5rem;
+      font-weight: 800;
+      line-height: 1.15;
+    }
+
+    .hero-title span {
+      background: linear-gradient(to right, #3B82F6, #06B6D4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      color: var(--text-muted);
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    @media (min-width: 992px) {
+      .btn-group {
+        justify-content: flex-start;
+      }
+    }
+
+    .btn-secondary {
+      background: var(--card-bg);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      font-weight: 700;
+      font-size: 0.875rem;
+      padding: 0.6rem 1.25rem;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    .btn-secondary:hover {
+      background: var(--border-color);
+    }
+
+    /* Core Modules Pill Grid */
+    .features-section {
+      margin-top: 4rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (min-width: 576px) {
+      .grid-4 { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (min-width: 992px) {
+      .grid-4 { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    .feature-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 1.5rem;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px -10px rgba(59, 130, 246, 0.15);
+      border-color: var(--primary);
+    }
+
+    .card-icon {
+      padding: 0.5rem;
+      border-radius: 10px;
+      width: fit-content;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon-blue { background: rgba(59, 130, 246, 0.1); color: #3B82F6; }
+    .icon-cyan { background: rgba(6, 182, 212, 0.1); color: #06B6D4; }
+    .icon-emerald { background: rgba(16, 185, 129, 0.1); color: #10B981; }
+    .icon-amber { background: rgba(245, 158, 11, 0.1); color: #F59E0B; }
+
+    .card-title {
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .card-desc {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      line-height: 1.5;
+    }
+
+    /* Auth Page */
+    .auth-card {
+      max-w: 420px;
+      margin: 0 auto;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      margin-bottom: 1.25rem;
+      text-align: left;
+    }
+
+    .form-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .form-input {
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-color);
+      color: var(--text-main);
+      font-size: 0.875rem;
+      outline: none;
+    }
+
+    .form-input:focus {
+      border-color: var(--primary);
+    }
+
+    /* Dashboard Metrics */
+    .dashboard-header {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 2rem;
+      text-align: left;
+    }
+
+    @media (min-width: 768px) {
+      .dashboard-header {
+        flex-direction: row;
+        align-items: center;
+      }
+    }
+
+    .streak-container {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .streak-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.5rem 1rem;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.8rem;
+      border: 1px solid var(--border-color);
+    }
+
+    .badge-amber { background: var(--accent-bg-amber); color: var(--accent-amber); border-color: rgba(245, 158, 11, 0.2); }
+    .badge-blue { background: var(--accent-bg-blue); color: var(--primary); border-color: rgba(59, 130, 246, 0.2); }
+
+    .dash-grid-main {
+      display: grid;
+      grid-template-cols: 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    @media (min-width: 992px) {
+      .dash-grid-main {
+        grid-template-columns: 8fr 4fr;
+      }
+    }
+
+    .checklist-list {
+      display: flex;
+      flex-direction: column;
+      margin-top: 1.5rem;
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .checklist-item:last-child {
+      border: none;
+    }
+
+    .checkbox-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .checkbox-custom {
+      width: 22px;
+      height: 22px;
+      border: 2px solid var(--border-color);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #fff;
+    }
+
+    .checkbox-custom.checked {
+      background: var(--accent-emerald);
+      border-color: var(--accent-emerald);
+    }
+
+    .checklist-item.done span {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .alert-box {
+      padding: 1rem;
+      border-radius: 14px;
+      font-size: 0.75rem;
+      line-height: 1.5;
+      font-weight: 500;
+      border: 1px solid var(--border-color);
+      margin-top: 1rem;
+      text-align: left;
+    }
+
+    .alert-rose { background: var(--accent-bg-rose); border-color: rgba(244, 63, 94, 0.2); color: var(--accent-rose); }
+    .alert-blue { background: var(--accent-bg-blue); border-color: rgba(59, 130, 246, 0.2); color: var(--primary); }
+
+    /* Aptitude timed quiz styling */
+    .quiz-card {
+      max-w: 720px;
+      margin: 0 auto;
+      text-align: left;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin: 1.5rem 0;
+    }
+
+    .quiz-option-btn {
+      width: 100%;
+      text-align: left;
+      padding: 1rem;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--text-main);
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .quiz-option-btn:hover {
+      border-color: var(--text-muted);
+    }
+
+    .quiz-option-btn.selected {
+      border-color: var(--primary);
+      background: var(--accent-bg-blue);
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .explanation-panel {
+      padding: 1rem;
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      font-size: 0.8rem;
+      line-height: 1.6;
+      margin-top: 1.5rem;
+      white-space: pre-line;
+    }
+
+    /* Coding Arena Split Pane */
+    .code-grid {
+      display: grid;
+      grid-template-cols: 1fr;
+      gap: 1.5rem;
+      text-align: left;
+    }
+
+    @media (min-width: 992px) {
+      .code-grid {
+        grid-template-columns: 5fr 7fr;
+      }
+    }
+
+    .editor-box {
+      background: #0B0F19;
+      border-radius: 20px;
+      border: 1px solid #23324A;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-height: 380px;
+    }
+
+    .editor-header {
+      background: #060913;
+      padding: 0.5rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #161F30;
+      color: #94A3B8;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .editor-textarea {
+      flex-grow: 1;
+      background: none;
+      border: none;
+      color: #F1F5F9;
+      font-family: "Courier New", Courier, monospace;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      padding: 1.25rem;
+      resize: none;
+      outline: none;
+      min-height: 220px;
+    }
+
+    .editor-footer {
+      background: #060913;
+      padding: 0.75rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid #161F30;
+    }
+
+    .terminal-box {
+      background: #0B0F19;
+      border: 1px solid #23324A;
+      border-radius: 14px;
+      padding: 1rem;
+      font-family: monospace;
+      font-size: 0.75rem;
+      color: #94A3B8;
+      margin-top: 1rem;
+    }
+
+    /* Resume dropzone */
+    .dropzone-box {
+      border: 2px dashed var(--border-color);
+      border-radius: 16px;
+      padding: 2.5rem;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.02);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      min-height: 200px;
+      position: relative;
+    }
+
+    .dropzone-box input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .dropzone-box:hover {
+      border-color: var(--primary);
+    }
+
+    /* Mock Interview Chat */
+    .chat-box {
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      border-radius: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 400px;
+      overflow: hidden;
+    }
+
+    .chat-logs {
+      flex-grow: 1;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      overflow-y: auto;
+      max-height: 280px;
+    }
+
+    .chat-msg {
+      max-width: 70%;
+      padding: 0.75rem 1rem;
+      border-radius: 16px;
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+
+    .msg-ai {
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      align-self: flex-start;
+      border-top-left-radius: 0;
+    }
+
+    .msg-user {
+      background: var(--primary);
+      color: #fff;
+      align-self: flex-end;
+      border-top-right-radius: 0;
+    }
+
+    .chat-input-area {
+      padding: 1rem;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .chat-input-field {
+      flex-grow: 1;
+      padding: 0.6rem 1rem;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-color);
+      color: var(--text-main);
+      font-size: 0.85rem;
+      outline: none;
+    }
+
+    .btn-mic {
+      background: none;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      border-radius: 12px;
+      padding: 0.6rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-mic.recording {
+      background: var(--accent-rose);
+      color: white;
+      border-color: var(--accent-rose);
+      animation: pulseMic 1.5s infinite;
+    }
+
+    @keyframes pulseMic {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.06); opacity: 0.95; }
+      100% { transform: scale(1); }
+    }
+
+    /* Footer styling */
+    footer {
+      background: #0B0F19;
+      color: #64748B;
+      padding: 1.5rem 0;
+      border-top: 1px solid #1E293B;
+      font-size: 0.75rem;
+      text-align: center;
+      margin-top: auto;
+    }
+
+    .footer-flex {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    @media (min-width: 768px) {
+      .footer-flex {
+        flex-direction: row;
+      }
+    }
+
+    .credit-tag {
+      background: #161F30;
+      border: 1px solid #23324A;
+      color: #E2E8F0;
+      padding: 0.4rem 1.25rem;
+      border-radius: 50px;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-darkBg dark:text-slate-100">
+
+  <!-- Header Nav -->
+  <header>
+    <div class="max-width-container nav-container">
+      <a href="#" class="logo" onclick="switchView('home')">
+        <svg style="width:24px; height:24px" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M6 18.8v-4L2 13v6a1 1 0 0 0 1 1h3Z"/><path d="M12 14.5v6"/></svg>
+        Campus2Corporate
+      </a>
+      <div class="nav-menu">
+        <button class="nav-link active" onclick="switchView('home')">Home</button>
+        <button class="nav-link" onclick="switchView('about')">About</button>
+        <button class="nav-link auth-required" style="display:none" onclick="switchView('dashboard')">Dashboard</button>
+        <button class="nav-link auth-required" style="display:none" onclick="switchView('aptitude')">Aptitude</button>
+        <button class="nav-link auth-required" style="display:none" onclick="switchView('coding')">Coding Arena</button>
+        <button class="nav-link auth-required" style="display:none" onclick="switchView('resume')">AI Resume</button>
+        <button class="nav-link auth-required" style="display:none" onclick="switchView('interview')">AI Interview</button>
+        <button class="nav-link auth-required" style="display:none" onclick="switchView('resources')">Resource Hub</button>
+        <button class="nav-link" onclick="switchView('contact')">Contact</button>
+      </div>
+      <div class="nav-actions">
+        <button class="theme-toggle" onclick="toggleTheme()">
+          <svg id="theme-icon-sun" style="display:none; width:18px; height:18px" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          <svg id="theme-icon-moon" style="width:18px; height:18px" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        </button>
+        <div id="user-nav-status">
+          <button class="btn-primary" onclick="switchView('auth')">Sign In</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main View Container -->
+  <main class="max-width-container">
+
+    <!-- 1. HOME VIEW -->
+    <div id="view-home" class="view-section active">
+      <div class="hero-grid">
+        <div class="hero-content">
+          <div class="badge-pill">
+            <svg style="width:14px; height:14px" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 21l8.982-11.795H13.62l.818-5.205L5.454 15.904h4.359Z"/></svg>
+            AI Placement Preparation Engine
+          </div>
+          <h1 class="hero-title">
+            Bridge the Gap from <br>
+            <span>Campus to Corporate</span>
+          </h1>
+          <p class="hero-subtitle">
+            Practice DSA compiler problems, solve timed quantitative/logical aptitude tests, audit your resumes with ATS checking models, and rehearse AI voice mock interviews.
+          </p>
+          <div class="btn-group">
+            <button class="btn-primary" onclick="handleCTAClick()">Get Started Free</button>
+            <button class="btn-secondary" onclick="switchView('about')">Read Vision</button>
+          </div>
+        </div>
+        <!-- Hero Graphics Card -->
+        <div style="display:flex; justify-content:center">
+          <div class="glass-panel" style="max-width:360px; width:100%; display:flex; flex-direction:column; gap:1.25rem; text-align:left">
+            <div style="display:flex; gap:0.25rem; border-bottom:1.5px solid var(--border-color); padding-bottom:0.75rem">
+              <div style="width:10px; height:10px; border-radius:50%; background:#F87171"></div>
+              <div style="width:10px; height:10px; border-radius:50%; background:#FBBF24"></div>
+              <div style="width:10px; height:10px; border-radius:50%; background:#34D399"></div>
+            </div>
+            <div style="background:var(--accent-bg-blue); padding:1rem; border-radius:14px; display:flex; align-items:center; gap:0.75rem">
+              <div class="card-icon icon-blue" style="margin:0"><svg style="width:20px; height:20px" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/></svg></div>
+              <div>
+                <p style="font-size:0.7rem; color:var(--text-muted); font-weight:700">PROFILE STRENGTH</p>
+                <p style="font-size:0.85rem; font-weight:800; color:var(--text-main)">Ready to Apply (82%)</p>
+              </div>
+            </div>
+            <div style="width:100%; background:var(--border-color); height:6px; border-radius:10px; overflow:hidden">
+              <div style="background:var(--primary); height:100%; width:82%"></div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:0.5rem; font-size:0.75rem">
+              <div style="padding:0.6rem; background:rgba(255,255,255,0.02); border:1px solid var(--border-color); border-radius:10px">💻 DSA "Two Sum" solved (Success)</div>
+              <div style="padding:0.6rem; background:rgba(255,255,255,0.02); border:1px solid var(--border-color); border-radius:10px">📄 AI Resume ATS score scanned (78%)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- pillars features -->
+      <div class="features-section">
+        <div>
+          <h2 style="font-size:1.8rem; font-weight:850; margin-bottom:0.5rem">Integrated Prep Ecosystem</h2>
+          <p style="font-size:0.9rem; color:var(--text-muted)">Everything college graduates need to crack corporate selection filters.</p>
+        </div>
+        <div class="grid-4">
+          <div class="feature-card" onclick="handleFeatureClick('aptitude')">
+            <div class="card-icon icon-blue"><svg style="width:22px; height:22px" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg></div>
+            <h3 class="card-title">Aptitude Prep</h3>
+            <p class="card-desc">Practice Quantitative, Logical, and Verbal modules with timed mock assessments.</p>
+          </div>
+          <div class="feature-card" onclick="handleFeatureClick('coding')">
+            <div class="card-icon icon-cyan"><svg style="width:22px; height:22px" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/></svg></div>
+            <h3 class="card-title">Coding Arena</h3>
+            <p class="card-desc">Solve DSA challenges categorized by difficulty with code console templates.</p>
+          </div>
+          <div class="feature-card" onclick="handleFeatureClick('resume')">
+            <div class="card-icon icon-emerald"><svg style="width:22px; height:22px" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/></svg></div>
+            <h3 class="card-title">AI Resume Analyzer</h3>
+            <p class="card-desc">Obtain instant ATS scores, catch missing skill blocks, and receive edit suggestions.</p>
+          </div>
+          <div class="feature-card" onclick="handleFeatureClick('interview')">
+            <div class="card-icon icon-amber"><svg style="width:22px; height:22px" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2v10"/></svg></div>
+            <h3 class="card-title">AI Mock Interview</h3>
+            <p class="card-desc">Practice technical and behavioral answers evaluated instantly for communication.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. ABOUT VIEW -->
+    <div id="view-about" class="view-section">
+      <div style="max-width:720px; margin:0 auto; text-align:left; display:flex; flex-direction:column; gap:2rem">
+        <div style="text-align:center; display:flex; flex-direction:column; gap:0.5rem">
+          <h1 style="font-size:2.2rem; font-weight:800">Our Platform Vision</h1>
+          <p style="color:var(--text-muted); font-size:0.95rem">Transitioning from college classrooms to corporate desks.</p>
+        </div>
+        <p style="font-size:0.95rem; line-height:1.7; color:var(--text-muted)">
+          Campus2Corporate acts as a unified digital trainer. By combining data structure sandboxes, arithmetic tests, resume evaluation engines, and interactive speaking terminals, we replace scattered resources with a single premium cockpit.
+        </p>
+        <div style="padding:1.5rem; border:1px solid var(--border-color); border-radius:18px; text-align:center; background:var(--card-bg); display:flex; flex-direction:column; align-items:center; gap:0.5rem">
+          <svg style="width:36px; height:36px; color:var(--accent-emerald)" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <h4 style="font-weight:700">B.Tech Capstone Project Authenticated</h4>
+          <p style="font-size:0.75rem; color:var(--text-muted)">Developed in compliance with final-year engineering assessment guidelines.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. AUTH VIEW -->
+    <div id="view-auth" class="view-section">
+      <div class="glass-panel auth-card">
+        <div style="text-align:center; margin-bottom:1.5rem; display:flex; flex-direction:column; gap:0.5rem">
+          <svg style="width:36px; height:36px; color:var(--primary); margin:0 auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M6 18.8v-4L2 13v6a1 1 0 0 0 1 1h3Z"/></svg>
+          <h2 style="font-weight:800">Sign In to Dashboard</h2>
+          <p style="font-size:0.75rem; color:var(--text-muted)">Type a user name to load a student profile</p>
+        </div>
+        <form onsubmit="handleOnboarding(event)" style="display:flex; flex-direction:column; gap:1.25rem">
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input type="text" id="auth-name" required value="Aadyasha Panda" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Branch / Field</label>
+            <input type="text" id="auth-branch" required value="Computer Science" class="form-input">
+          </div>
+          <button type="submit" class="btn-primary" style="padding:0.75rem">Submit Profile</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 4. DASHBOARD VIEW -->
+    <div id="view-dashboard" class="view-section">
+      <div class="dashboard-header">
+        <div>
+          <h1 style="font-size:1.8rem; font-weight:800" id="dash-greeting">Welcome, Student!</h1>
+          <p style="font-size:0.8rem; color:var(--text-muted)" id="dash-branch-info">Branch: Computer Science &middot; Placement Ready</p>
+        </div>
+        <div class="streak-container">
+          <div class="streak-badge badge-amber">
+            <svg style="width:16px; height:16px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+            5 Day Streak
+          </div>
+          <div class="streak-badge badge-blue">
+            <svg style="width:16px; height:16px" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/></svg>
+            450 XP Earned
+          </div>
+        </div>
+      </div>
+
+      <div class="dash-grid-main">
+        <!-- Checklist panel -->
+        <div class="glass-panel" style="text-align:left">
+          <h3 style="font-weight:800">Daily Recommended Tasks</h3>
+          <div class="checklist-list">
+            <div class="checklist-item" id="task-apt">
+              <div class="checkbox-wrap">
+                <div class="checkbox-custom" onclick="toggleTask('apt')"></div>
+                <span>Solve Quantitative Quiz: Percentages & Interest</span>
+              </div>
+              <button class="btn-secondary" style="padding:0.4rem 0.8rem; font-size:0.7rem; border-radius:8px" onclick="switchView('aptitude')">Open</button>
+            </div>
+            <div class="checklist-item" id="task-code">
+              <div class="checkbox-wrap">
+                <div class="checkbox-custom" onclick="toggleTask('code')"></div>
+                <span>Solve "Two Sum" challenge in Coding Arena</span>
+              </div>
+              <button class="btn-secondary" style="padding:0.4rem 0.8rem; font-size:0.7rem; border-radius:8px" onclick="switchView('coding')">Open</button>
+            </div>
+            <div class="checklist-item" id="task-resume">
+              <div class="checkbox-wrap">
+                <div class="checkbox-custom" onclick="toggleTask('resume')"></div>
+                <span>Analyze ATS scores of your Resume PDF</span>
+              </div>
+              <button class="btn-secondary" style="padding:0.4rem 0.8rem; font-size:0.7rem; border-radius:8px" onclick="switchView('resume')">Open</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Alert feeds -->
+        <div class="glass-panel" style="text-align:left; display:flex; flex-direction:column; justify-content:space-between">
+          <div>
+            <h3 style="font-weight:800; display:flex; align-items:center; gap:0.5rem">
+              <svg style="width:20px; height:20px; color:var(--primary)" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"/></svg>
+              Important Alerts
+            </h3>
+            <div class="alert-box alert-rose">
+              🚨 <b>TCS NQT Registration Deadline</b>: Submit eligibility fields within 3 days.
+            </div>
+            <div class="alert-box alert-blue">
+              📄 <b>Resume Suggestions Calculated</b>: 3 missing Cloud keywords found.
+            </div>
+          </div>
+          <button class="btn-primary" style="margin-top:1.5rem; width:100%" onclick="switchView('interview')">Practice Mock Interview</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. APTITUDE VIEW -->
+    <div id="view-aptitude" class="view-section">
+      <div class="max-width-container" style="max-width:800px">
+        
+        <!-- Category Selector Panel -->
+        <div id="apt-categories-panel" class="space-y-6">
+          <div style="text-align:center; display:flex; flex-direction:column; gap:0.5rem; margin-bottom:2rem">
+            <h1 style="font-size:1.8rem; font-weight:800">Placement Aptitude Exam Library</h1>
+            <p style="font-size:0.85rem; color:var(--text-muted)">Practice real previous year questions from TCS, Infosys, and Wipro drives.</p>
+          </div>
+          
+          <div style="display:flex; flex-direction:column; gap:1.25rem">
+            <div class="glass-panel" style="display:flex; justify-content:space-between; align-items:center; gap:1rem; cursor:pointer" onclick="startAptitudeQuiz('quantitative')">
+              <div style="text-align:left">
+                <h3 style="font-weight:800; font-size:1.1rem; color:var(--primary)">Quantitative Aptitude Papers</h3>
+                <p style="font-size:0.75rem; color:var(--text-muted); margin-top:0.25rem">Percentages, Profit/Loss, Averages, and Time-Work calculations.</p>
+              </div>
+              <button class="btn-primary">Start test</button>
+            </div>
+            <div class="glass-panel" style="display:flex; justify-content:space-between; align-items:center; gap:1rem; cursor:pointer" onclick="startAptitudeQuiz('logical')">
+              <div style="text-align:left">
+                <h3 style="font-weight:800; font-size:1.1rem; color:var(--accent-cyan)">Logical Reasoning Papers</h3>
+                <p style="font-size:0.75rem; color:var(--text-muted); margin-top:0.25rem">LCM bell sequences, Coding & Decoding matrix rules.</p>
+              </div>
+              <button class="btn-primary" style="background:var(--accent-cyan)">Start test</button>
+            </div>
+            <div class="glass-panel" style="display:flex; justify-content:space-between; align-items:center; gap:1rem; cursor:pointer" onclick="startAptitudeQuiz('verbal')">
+              <div style="text-align:left">
+                <h3 style="font-weight:800; font-size:1.1rem; color:var(--accent-emerald)">Verbal Ability Papers</h3>
+                <p style="font-size:0.75rem; color:var(--text-muted); margin-top:0.25rem">Synonyms (Ephemeral), Grammatical error corrections, subject-verbs.</p>
+              </div>
+              <button class="btn-primary" style="background:var(--accent-emerald)">Start test</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Timed Quiz Box -->
+        <div id="apt-quiz-console" class="glass-panel quiz-card" style="display:none">
+          <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-color); padding-bottom:0.75rem; margin-bottom:1.5rem">
+            <span id="quiz-question-counter" style="font-size:0.75rem; color:var(--text-muted); font-weight:700">QUESTION 1 OF 3</span>
+            <span style="color:var(--accent-rose); font-weight:750; display:flex; align-items:center; gap:0.25rem">
+              <svg style="width:14px; height:14px" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              Timer Active
+            </span>
+          </div>
+
+          <p id="quiz-question-text" style="font-size:1.1rem; font-weight:700; line-height:1.6; margin-bottom:1.5rem">
+            Question text loading...
+          </p>
+
+          <div class="quiz-options" id="quiz-options-container">
+            <!-- options load dynamically -->
+          </div>
+
+          <div class="explanation-panel" id="quiz-explanation-box" style="display:none">
+            <span style="color:var(--primary); font-weight:700; display:block; margin-bottom:0.4rem">DETAILED SOLUTION:</span>
+            <p id="quiz-explanation-text" style="color:var(--text-muted); font-size:0.8rem; line-height:1.6"></p>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-color); padding-top:1rem; margin-top:1.5rem">
+            <span style="font-size:0.75rem; color:var(--text-muted)">Award: +30 XP</span>
+            <div style="display:flex; gap:0.5rem">
+              <button class="btn-secondary" id="btn-next-question" style="display:none" onclick="loadNextQuizQuestion()">Next Question</button>
+              <button class="btn-primary" id="btn-submit-quiz-answer" disabled onclick="submitSelectedQuizAnswer()">Submit Answer</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Score Results Display -->
+        <div id="apt-quiz-result" class="glass-panel" style="display:none; text-align:center; display:flex; flex-direction:column; gap:1.5rem">
+          <div style="padding:1rem; background:var(--accent-bg-blue); border-radius:50%; width:fit-content; margin:0 auto; color:var(--primary)">
+            <svg style="width:48px; height:48px" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><path d="M8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+          </div>
+          <h2 style="font-weight:800; font-size:1.8rem">Test Finished!</h2>
+          <p id="quiz-score-report" style="font-size:0.95rem; color:var(--text-muted)">
+            You scored 3 out of 3 questions (100% accuracy).
+          </p>
+          <button class="btn-primary" style="width:fit-content; margin:0 auto" onclick="exitQuizConsole()">Return to Categories</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 6. CODING ARENA VIEW -->
+    <div id="view-coding" class="view-section">
+      <div class="code-grid">
+        <div class="glass-panel" style="display:flex; flex-direction:column; justify-content:space-between">
+          <div style="display:flex; flex-direction:column; gap:1.25rem">
+            <div style="display:flex; gap:0.5rem">
+              <span style="background:var(--accent-bg-blue); color:var(--primary); font-size:0.7rem; font-weight:700; padding:0.25rem 0.6rem; border-radius:50px">Easy</span>
+              <span style="font-size:0.8rem; color:var(--text-muted)">Arrays & Hashing</span>
+            </div>
+            <h2 style="font-weight:800">Two Sum</h2>
+            <p style="font-size:0.85rem; color:var(--text-muted); line-height:1.6">
+              Given an array of integers <code>nums</code> and an integer <code>target</code>, return indices of the two numbers such that they add up to target. You may assume that each input would have exactly one solution.
+            </p>
+            <div style="font-size:0.75rem; color:var(--text-muted)">
+              <b>Constraints:</b>
+              <ul style="padding-left:1rem; margin-top:0.25rem">
+                <li>2 <= nums.length <= 10^4</li>
+                <li>-10^9 <= nums[i] <= 10^9</li>
+              </ul>
+            </div>
+          </div>
+          <div style="font-size:0.75rem; color:var(--text-muted); border-top:1px solid var(--border-color); padding-top:1rem; margin-top:1.5rem">
+            Asked at: <b>Google, Amazon, TCS</b>
+          </div>
+        </div>
+
+        <div class="editor-box">
+          <div class="editor-header">
+            <span>twoSum.js</span>
+            <span>JavaScript</span>
+          </div>
+          <textarea class="editor-textarea" id="coding-textarea">function twoSum(nums, target) {
+    // Write your code here
+    const map = new Map();
+    for (let i = 0; i < nums.length; i++) {
+        const complement = target - nums[i];
+        if (map.has(complement)) {
+            return [map.get(complement), i];
+        }
+        map.set(nums[i], i);
+    }
+}</textarea>
+          <div class="editor-footer">
+            <button class="btn-secondary" style="border-color:#23324A; background:none; color:#94A3B8; font-size:0.75rem" onclick="runMockCode()">Run Test Cases</button>
+            <button class="btn-primary" style="font-size:0.75rem" onclick="submitMockCode()">Submit Code</button>
+          </div>
+          <div class="terminal-box" id="code-terminal" style="display:none"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. RESUME ANALYZER VIEW -->
+    <div id="view-resume" class="view-section">
+      <div style="text-align:center; display:flex; flex-direction:column; gap:0.5rem; max-width:600px; margin:0 auto 2.5rem">
+        <h1 style="font-size:1.8rem; font-weight:800">AI Resume ATS Analyzer</h1>
+        <p style="font-size:0.85rem; color:var(--text-muted)">Audit files instantly against recruiter screening rules.</p>
+      </div>
+      <div class="grid-4" style="grid-template-columns:1fr; max-width:800px; margin:2rem auto 0; gap:2rem">
+        <div class="glass-panel dropzone-box" onclick="simulateResumeScan()">
+          <svg style="width:36px; height:36px; color:var(--text-muted)" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m15 15-3-3-3 3"/></svg>
+          <div>
+            <p style="font-size:0.9rem; font-weight:700">Click to upload sample Resume PDF</p>
+            <p style="font-size:0.75rem; color:var(--text-muted); margin-top:0.25rem">Calculates ATS grades, phrasing fixes and missing skills.</p>
+          </div>
+        </div>
+        <div class="glass-panel" id="resume-result-board" style="display:none; text-align:left">
+          <div style="display:flex; justify-content:between; align-items:center; border-bottom:1px solid var(--border-color); padding-bottom:1rem; margin-bottom:1rem">
+            <h3 style="font-weight:800">ATS Assessment Result</h3>
+            <span style="font-size:1.5rem; font-weight:900; color:var(--accent-emerald)" id="resume-score">78%</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:1rem; font-size:0.8rem">
+            <div>
+              <span style="color:var(--accent-emerald); font-weight:700; display:block; margin-bottom:0.25rem">✔ Key Strengths:</span>
+              <p style="color:var(--text-muted)">Clear quantified metrics (e.g. "improved speed by 30%") and project headings.</p>
+            </div>
+            <div>
+              <span style="color:var(--accent-rose); font-weight:700; display:block; margin-bottom:0.25rem">⚠ Critical Gaps:</span>
+              <p style="color:var(--text-muted)">Missing cloud engineering keywords (Docker, AWS) requested by Google/Amazon.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. AI MOCK INTERVIEW VIEW -->
+    <div id="view-interview" class="view-section">
+      <div style="max-width:680px; margin:0 auto; text-align:left; display:flex; flex-direction:column; gap:1.5rem">
+        <h1 style="font-size:1.8rem; font-weight:800; text-align:center">AI Mock Interview Console</h1>
+        <div class="chat-box">
+          <div class="chat-logs" id="chat-logs-area">
+            <div class="chat-msg msg-ai">
+              Hello! I will be your technical interviewer today. To start: <b>Explain the difference between SQL and NoSQL databases</b>.
+            </div>
+          </div>
+          <div class="chat-input-area">
+            <button class="btn-mic" id="btn-mic-toggle" onclick="toggleMicRecording()">
+              <svg style="width:18px; height:18px" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
+            </button>
+            <input type="text" class="chat-input-field" id="chat-input-box" placeholder="Type or record response...">
+            <button class="btn-primary" style="padding:0.5rem 1rem" onclick="submitMockResponse()">Send</button>
+          </div>
+        </div>
+        
+        <div class="glass-panel" id="interview-report-board" style="display:none; text-align:left">
+          <h3 style="font-weight:800; border-bottom:1px solid var(--border-color); padding-bottom:0.75rem; margin-bottom:1rem">AI Interview Feedback Scorecard</h3>
+          <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem; text-align:center; margin-bottom:1rem">
+            <div style="background:var(--bg-color); padding:0.5rem; border-radius:10px">
+              <p style="font-size:1.25rem; font-weight:800; color:var(--primary)">84%</p>
+              <p style="font-size:0.6rem; color:var(--text-muted); font-weight:700">VOCAL PACING</p>
+            </div>
+            <div style="background:var(--bg-color); padding:0.5rem; border-radius:10px">
+              <p style="font-size:1.25rem; font-weight:800; color:var(--accent-emerald)">80%</p>
+              <p style="font-size:0.6rem; color:var(--text-muted); font-weight:700">TECH DEPTH</p>
+            </div>
+            <div style="background:var(--bg-color); padding:0.5rem; border-radius:10px">
+              <p style="font-size:1.25rem; font-weight:800; color:var(--accent-amber)">88%</p>
+              <p style="font-size:0.6rem; color:var(--text-muted); font-weight:700">CONFIDENCE</p>
+            </div>
+          </div>
+          <p style="font-size:0.8rem; color:var(--text-muted); line-height:1.6">
+            <b>Vocal Feedback:</b> Coherent structure. You clearly explained row-column indexing models. Suggestion: Mention specific runtime complexities when explaining algorithm operations.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9. RESOURCE HUB VIEW (PDF SHARING BOARD) -->
+    <div id="view-resources" class="view-section">
+      <div style="text-align:center; display:flex; flex-direction:column; gap:0.5rem; max-width:600px; margin:0 auto 2.5rem">
+        <h1 style="font-size:1.8rem; font-weight:800">PDF Resource Sharing Hub</h1>
+        <p style="font-size:0.85rem; color:var(--text-muted)">Upload, download, and view preparation study guides and sheets.</p>
+      </div>
+
+      <div class="grid-4" style="grid-template-columns:1fr; max-width:900px; margin:2rem auto 0; gap:2rem; align-items:start">
+        
+        <!-- Upload Form -->
+        <div class="glass-panel" style="text-align:left; display:flex; flex-direction:column; gap:1.25rem">
+          <h3 style="font-weight:800; display:flex; align-items:center; gap:0.5rem">
+            <svg style="width:20px; height:20px; color:var(--primary)" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m15 15-3-3-3 3"/></svg>
+            Share PDF Resource
+          </h3>
+          <form onsubmit="handleResourceUpload(event)" style="display:flex; flex-direction:column; gap:1rem">
+            <div class="form-group">
+              <label class="form-label">Document Title</label>
+              <input type="text" id="res-upload-title" required placeholder="e.g. TCS NQT Quantitative Guide" class="form-input">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Prep Category</label>
+              <select id="res-upload-cat" class="form-input" style="padding:0.75rem 1rem">
+                <option value="Aptitude">Aptitude Prep</option>
+                <option value="Coding">Coding Arena</option>
+                <option value="Resume">AI Resume Analyzer</option>
+                <option value="Interview">AI Mock Interview</option>
+              </select>
+            </div>
+            <div class="dropzone-box" style="padding:1.5rem; min-height:120px">
+              <input type="file" id="res-upload-file" accept=".pdf" required onchange="handleResourceFileChange()">
+              <svg style="width:24px; height:24px; color:var(--text-muted)" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/></svg>
+              <span id="res-file-label" style="font-size:0.75rem; font-weight:700">Select PDF Document</span>
+            </div>
+            <div id="res-upload-success" style="display:none; color:var(--accent-emerald); font-size:0.8rem; font-weight:700; text-align:center">
+              ✔ PDF uploaded & shared to resource board!
+            </div>
+            <button type="submit" class="btn-primary" style="padding:0.75rem">Upload & Share PDF</button>
+          </form>
+        </div>
+
+        <!-- Shared List Board -->
+        <div class="glass-panel" style="text-align:left; display:flex; flex-direction:column; gap:1.25rem">
+          <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-color); padding-bottom:0.75rem">
+            <h3 style="font-weight:800">Shared Documents Library</h3>
+            <span style="font-size:0.75rem; font-weight:700; color:var(--primary)" id="res-count-badge">4 Files</span>
+          </div>
+          
+          <div id="res-list-container" style="display:flex; flex-direction:column; gap:1rem">
+            <!-- Items load dynamically -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 10. CONTACT VIEW -->
+    <div id="view-contact" class="view-section">
+      <div style="max-width:680px; margin:0 auto; text-align:left; display:flex; flex-direction:column; gap:2rem">
+        <h1 style="font-size:1.8rem; font-weight:800; text-align:center">Support Helpdesk</h1>
+        <div class="glass-panel" style="display:flex; flex-direction:column; gap:1.25rem">
+          <h3 style="font-weight:800">Submit a Support Ticket</h3>
+          <form onsubmit="handleMessageSubmit(event)" style="display:flex; flex-direction:column; gap:1rem">
+            <div class="form-group">
+              <label class="form-label">Message</label>
+              <textarea placeholder="Describe your query..." style="height:100px; padding:0.75rem 1rem; border-radius:12px; border:1px solid var(--border-color); background:var(--bg-color); color:var(--text-main); font-size:0.875rem; outline:none; resize:none;" id="contact-text"></textarea>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center">
+              <span id="contact-sent-msg" style="display:none; color:var(--accent-emerald); font-size:0.8rem; font-weight:700">✔ Ticket submitted successfully!</span>
+              <button type="submit" class="btn-primary">Submit Ticket</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer copyright -->
+  <footer>
+    <div class="max-width-container footer-flex">
+      <p>&copy; 2026 Campus2Corporate Placement Preparation Portal.</p>
+      <div class="credit-tag">made by aadyasha panda since 2025</div>
+      <p>B.Tech Capstone Project verified</p>
+    </div>
+  </footer>
+
+  <!-- --- JAVASCRIPT STATE CONTROLLER (ZERO DEPENDENCY INTERACTIVE LOGIC) --- -->
+  <script>
+    // Theme toggle controller
+    function toggleTheme() {
+      const htmlEl = document.documentElement;
+      const sunIcon = document.getElementById('theme-icon-sun');
+      const moonIcon = document.getElementById('theme-icon-moon');
+      
+      if (htmlEl.classList.contains('dark')) {
+        htmlEl.classList.remove('dark');
+        sunIcon.style.display = 'none';
+        moonIcon.style.display = 'block';
+        document.body.style.backgroundColor = '#F8FAFC';
+      } else {
+        htmlEl.classList.add('dark');
+        sunIcon.style.display = 'block';
+        moonIcon.style.display = 'none';
+        document.body.style.backgroundColor = '#0B0F19';
+      }
+    }
+
+    // Onboarding and User Session State
+    let userSession = null;
+
+    function handleOnboarding(e) {
+      e.preventDefault();
+      const nameInput = document.getElementById('auth-name').value;
+      const branchInput = document.getElementById('auth-branch').value;
+
+      userSession = {
+        name: nameInput || 'Aadyasha Panda',
+        branch: branchInput || 'Computer Science'
+      };
+
+      // Enable dashboard links
+      const authLinks = document.querySelectorAll('.auth-required');
+      authLinks.forEach(el => el.style.display = 'block');
+
+      // Update Nav status
+      document.getElementById('user-nav-status').innerHTML = `
+        <div style="display:flex; align-items:center; gap:0.5rem">
+          <div style="width:30px; height:30px; border-radius:50%; background:var(--accent-bg-blue); color:var(--primary); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.8rem">
+            ${userSession.name[0]}
+          </div>
+          <button class="nav-link" onclick="logout()" style="padding:0.25rem 0.5rem; font-size:0.75rem">Log Out</button>
+        </div>
+      `;
+
+      // Update Dashboard elements
+      document.getElementById('dash-greeting').innerText = `Welcome back, ${userSession.name}!`;
+      document.getElementById('dash-branch-info').innerText = `Branch: ${userSession.branch} &middot; Placement Ready`;
+
+      // Switch to dashboard
+      switchView('dashboard');
+    }
+
+    function logout() {
+      userSession = null;
+      const authLinks = document.querySelectorAll('.auth-required');
+      authLinks.forEach(el => el.style.display = 'none');
+      document.getElementById('user-nav-status').innerHTML = `
+        <button class="btn-primary" onclick="switchView('auth')">Sign In</button>
+      `;
+      switchView('home');
+    }
+
+    // View switcher routing
+    function switchView(viewId) {
+      const views = document.querySelectorAll('.view-section');
+      views.forEach(v => v.classList.remove('active'));
+
+      const activeView = document.getElementById(`view-${viewId}`);
+      if (activeView) activeView.classList.add('active');
+
+      const links = document.querySelectorAll('.nav-link');
+      links.forEach(l => l.classList.remove('active'));
+      
+      // Highlight correct link
+      const targetLink = Array.from(links).find(l => l.getAttribute('onclick').includes(viewId));
+      if (targetLink) targetLink.classList.add('active');
+
+      if (viewId === 'resources') {
+        renderResources();
+      }
+
+      window.scrollTo(0, 0);
+    }
+
+    function handleCTAClick() {
+      if (userSession) {
+        switchView('dashboard');
+      } else {
+        switchView('auth');
+      }
+    }
+
+    function handleFeatureClick(featureId) {
+      if (userSession) {
+        switchView(featureId);
+      } else {
+        switchView('auth');
+      }
+    }
+
+    // Dashboard Checklist toggling
+    function toggleTask(taskId) {
+      const taskRow = document.getElementById(`task-${taskId}`);
+      const checkbox = taskRow.querySelector('.checkbox-custom');
+      
+      if (taskRow.classList.contains('done')) {
+        taskRow.classList.remove('done');
+        checkbox.classList.remove('checked');
+        checkbox.innerHTML = '';
+      } else {
+        taskRow.classList.add('done');
+        checkbox.classList.add('checked');
+        checkbox.innerHTML = '✔';
+      }
+    }
+
+    // Real Aptitude Exam Data (TCS, Wipro, Infosys placements)
+    const REAL_APTITUDE_DATA = {
+      quantitative: {
+        title: 'Quantitative Aptitude (TCS & Wipro Practice)',
+        questions: [
+          {
+            text: 'A person increases the price of an item by 20% and then reduces it by 20%. What is the net percentage change in the price of the item?',
+            options: ['No change', '4% increase', '4% decrease', '2% decrease'],
+            correct: 2,
+            explanation: 'Let initial price = 100.<br>1. After 20% increase: 100 + 20 = 120.<br>2. After 20% reduction on 120: 120 - (20% of 120) = 120 - 24 = 96.<br>3. Net change = 96 - 100 = -4% (4% decrease).'
+          },
+          {
+            text: 'The average weight of 10 students is 40 kg. If a new student with a weight of 51 kg joins the group, what is the new average weight of the students?',
+            options: ['41 kg', '41.5 kg', '42 kg', '40.5 kg'],
+            correct: 0,
+            explanation: '1. Sum of weights of 10 students = 10 × 40 = 400 kg.<br>2. Weight of 11 students = 400 + 51 = 451 kg.<br>3. New average weight = 451 ÷ 11 = 41 kg.'
+          },
+          {
+            text: 'A and B can do a piece of work in 12 days, B and C in 15 days, and C and A in 20 days. In how many days can A alone do the work?',
+            options: ['20 days', '30 days', '40 days', '60 days'],
+            correct: 1,
+            explanation: 'Work done by A+B in 1 day = 1/12. By B+C = 1/15. By C+A = 1/20. Summing: 2(A+B+C) = 1/12 + 1/15 + 1/20 = 1/5. Thus A+B+C take 10 days to finish. A alone in 1 day = (A+B+C) - (B+C) = 1/10 - 1/15 = 1/30. So A alone takes 30 days.'
+          }
+        ]
+      },
+      logical: {
+        title: 'Logical Reasoning (Infosys & TCS Digital Practice)',
+        questions: [
+          {
+            text: 'Six bells toll together at intervals of 3, 6, 9, 12, 15, and 18 seconds respectively. In 60 minutes, how many times do they toll together (including the first toll)?',
+            options: ['20 times', '21 times', '19 times', '22 times'],
+            correct: 1,
+            explanation: '1. LCM of 3, 6, 9, 12, 15, 18 = 180 seconds.<br>2. 180 seconds = 3 minutes. The bells toll together every 3 minutes.<br>3. In 60 minutes, they toll = (60 ÷ 3) + 1 (start toll) = 21 times.'
+          },
+          {
+            text: 'In a certain code language, "COMPUTER" is written as "RFUVQNPC". How is "MEDICINE" written in that same code?',
+            options: ['EOJDEJFM', 'EOJDJEFM', 'MFEJDJOE', 'MFEDJJOE'],
+            correct: 1,
+            explanation: 'The pattern is: Reverse the letters first. MEDICINE becomes ENICIDEM. Then add +1 to the letters in sequence (except the boundaries which match the cipher rules), which yields EOJDJEFM.'
+          }
+        ]
+      },
+      verbal: {
+        title: 'Verbal Ability (Cognizant & Wipro Practice)',
+        questions: [
+          {
+            text: 'Identify the synonym of the word: "EPHEMERAL".',
+            options: ['Eternal', 'Transient', 'Monumental', 'Deliberate'],
+            correct: 1,
+            explanation: 'Ephemeral means lasting for a very short time. Transient is the direct synonym, meaning temporary.'
+          },
+          {
+            text: 'Find the grammatical error: "Each of the students are required to submit their assignments by Friday."',
+            options: ['Each of the', 'students are required', 'to submit their', 'assignments by Friday'],
+            correct: 1,
+            explanation: 'The subject "Each" is singular and requires a singular verb. The correct phrasing is "students is required", not "students are required".'
+          }
+        ]
+      }
+    };
+
+    // TIMED APTITUDE TEST CONTROLLER (MULTI-CATEGORY ENGINE)
+    let currentAptCategory = null;
+    let currentAptQuestions = [];
+    let currentAptQuestionIdx = 0;
+    let currentAptAnswers = {};
+    let selectedAptOption = null;
+
+    function startAptitudeQuiz(categoryKey) {
+      currentAptCategory = categoryKey;
+      currentAptQuestions = REAL_APTITUDE_DATA[categoryKey].questions;
+      currentAptQuestionIdx = 0;
+      currentAptAnswers = {};
+      selectedAptOption = null;
+
+      document.getElementById('apt-categories-panel').style.display = 'none';
+      document.getElementById('apt-quiz-result').style.display = 'none';
+      document.getElementById('apt-quiz-console').style.display = 'block';
+
+      loadQuizQuestion();
+    }
+
+    function loadQuizQuestion() {
+      selectedAptOption = null;
+      document.getElementById('btn-submit-quiz-answer').setAttribute('disabled', 'true');
+      document.getElementById('btn-next-question').style.display = 'none';
+      document.getElementById('quiz-explanation-box').style.display = 'none';
+
+      const q = currentAptQuestions[currentAptQuestionIdx];
+      document.getElementById('quiz-question-counter').innerText = `QUESTION ${currentAptQuestionIdx + 1} OF ${currentAptQuestions.length}`;
+      document.getElementById('quiz-question-text').innerHTML = q.text;
+
+      const container = document.getElementById('quiz-options-container');
+      container.innerHTML = '';
+
+      q.options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-option-btn';
+        btn.innerHTML = `<span style="display:inline-block; width:22px; height:22px; border-radius:50%; background:var(--bg-color); color:var(--text-muted); text-align:center; line-height:22px; margin-right:0.75rem; font-size:0.75rem; font-weight:800">${String.fromCharCode(65 + idx)}</span>${opt}`;
+        btn.onclick = () => selectQuizOptionIndex(idx, btn);
+        container.appendChild(btn);
+      });
+    }
+
+    function selectQuizOptionIndex(idx, btnEl) {
+      selectedAptOption = idx;
+      
+      const buttons = document.querySelectorAll('.quiz-option-btn');
+      buttons.forEach(b => b.classList.remove('selected'));
+      btnEl.classList.add('selected');
+
+      document.getElementById('btn-submit-quiz-answer').removeAttribute('disabled');
+    }
+
+    function submitSelectedQuizAnswer() {
+      const q = currentAptQuestions[currentAptQuestionIdx];
+      currentAptAnswers[currentAptQuestionIdx] = selectedAptOption;
+
+      const explanationText = document.getElementById('quiz-explanation-text');
+      explanationText.innerHTML = q.explanation;
+      document.getElementById('quiz-explanation-box').style.display = 'block';
+
+      document.getElementById('btn-submit-quiz-answer').setAttribute('disabled', 'true');
+      
+      const buttons = document.querySelectorAll('.quiz-option-btn');
+      buttons.forEach((b, idx) => {
+        b.onclick = null;
+        if (idx === q.correct) {
+          b.style.borderColor = 'var(--accent-emerald)';
+          b.style.color = 'var(--accent-emerald)';
+          b.style.background = 'rgba(16, 185, 129, 0.08)';
+        } else if (idx === selectedAptOption) {
+          b.style.borderColor = 'var(--accent-rose)';
+          b.style.color = 'var(--accent-rose)';
+          b.style.background = 'rgba(244, 63, 94, 0.08)';
+        }
+      });
+
+      document.getElementById('btn-next-question').style.display = 'block';
+    }
+
+    function loadNextQuizQuestion() {
+      if (currentAptQuestionIdx < currentAptQuestions.length - 1) {
+        currentAptQuestionIdx++;
+        loadQuizQuestion();
+      } else {
+        document.getElementById('apt-quiz-console').style.display = 'none';
+        
+        let score = 0;
+        currentAptQuestions.forEach((q, idx) => {
+          if (currentAptAnswers[idx] === q.correct) score++;
+        });
+
+        const pct = Math.round((score / currentAptQuestions.length) * 100);
+        document.getElementById('quiz-score-report').innerText = `You scored ${score} out of ${currentAptQuestions.length} (${pct}% accuracy).`;
+        document.getElementById('apt-quiz-result').style.display = 'block';
+      }
+    }
+
+    function exitQuizConsole() {
+      document.getElementById('apt-quiz-result').style.display = 'none';
+      document.getElementById('apt-categories-panel').style.display = 'block';
+    }
+
+    // Coding Arena Terminal Mock
+    function runMockCode() {
+      const term = document.getElementById('code-terminal');
+      term.style.display = 'block';
+      term.innerHTML = '<span style="color:var(--primary)">Compiling and executing test cases...</span>';
+      
+      setTimeout(() => {
+        term.innerHTML = '<span style="color:var(--accent-emerald)">✔ Success: 3/3 mock test instances passed! Runtime: 48ms</span>';
+      }, 1200);
+    }
+
+    function submitMockCode() {
+      const term = document.getElementById('code-terminal');
+      term.style.display = 'block';
+      term.innerHTML = '<span style="color:var(--primary)">Submitting code to evaluation server...</span>';
+      
+      setTimeout(() => {
+        term.innerHTML = '<span style="color:var(--accent-emerald)">✔ Accepted. All test cases passed! +50 XP points awarded.</span>';
+      }, 1200);
+    }
+
+    // Resume Scan simulation
+    function simulateResumeScan() {
+      const board = document.getElementById('resume-result-board');
+      board.style.display = 'block';
+      document.getElementById('resume-score').innerText = 'Scanning...';
+      
+      setTimeout(() => {
+        document.getElementById('resume-score').innerText = '78%';
+      }, 1200);
+    }
+
+    // AI Mock Interview chat simulator
+    let recordState = false;
+
+    function toggleMicRecording() {
+      const btn = document.getElementById('btn-mic-toggle');
+      const input = document.getElementById('chat-input-box');
+      
+      if (recordState) {
+        recordState = false;
+        btn.classList.remove('recording');
+        input.value = 'SQL databases store tabular relational data, while NoSQL databases store non-relational document or key-value entries which scale easily.';
+      } else {
+        recordState = true;
+        btn.classList.add('recording');
+        input.value = '';
+      }
+    }
+
+    function submitMockResponse() {
+      const input = document.getElementById('chat-input-box');
+      const logs = document.getElementById('chat-logs-area');
+      const report = document.getElementById('interview-report-board');
+
+      if (!input.value.trim()) return;
+
+      const userMsg = document.createElement('div');
+      userMsg.className = 'chat-msg msg-user';
+      userMsg.innerText = input.value;
+      logs.appendChild(userMsg);
+      input.value = '';
+      
+      logs.scrollTop = logs.scrollHeight;
+
+      setTimeout(() => {
+        const aiMsg = document.createElement('div');
+        aiMsg.className = 'chat-msg msg-ai';
+        aiMsg.innerHTML = 'Thank you for your answer. Let\'s evaluate your session details.';
+        logs.appendChild(aiMsg);
+        logs.scrollTop = logs.scrollHeight;
+        
+        report.style.display = 'block';
+      }, 1200);
+    }
+
+    // PDF Resource Sharing Hub Data and Functions
+    let resourceList = [
+      {
+        id: 'res-1',
+        title: 'TCS NQT Quantitative Aptitude Formula Sheet',
+        category: 'Aptitude',
+        fileName: 'TCS_NQT_Quant_Formulas.pdf',
+        size: '1.2 MB',
+        uploadedBy: 'Siddharth Sharma',
+        downloads: 142
+      },
+      {
+        id: 'res-2',
+        title: 'Top 50 DSA Questions Cheat Sheet',
+        category: 'Coding',
+        fileName: 'DSA_Placement_Cheatsheet.pdf',
+        size: '2.4 MB',
+        uploadedBy: 'Priya Patel',
+        downloads: 320
+      },
+      {
+        id: 'res-3',
+        title: 'Standard Product-Based Resume Template',
+        category: 'Resume',
+        fileName: 'ATS_Optimized_Resume_Template.pdf',
+        size: '850 KB',
+        uploadedBy: 'Aadyasha Panda',
+        downloads: 285
+      },
+      {
+        id: 'res-4',
+        title: 'Behavioral HR Interview STAR Method Guide',
+        category: 'Interview',
+        fileName: 'STAR_Interview_Guide.pdf',
+        size: '1.5 MB',
+        uploadedBy: 'Ankit Gupta',
+        downloads: 98
+      }
+    ];
+
+    function renderResources() {
+      const container = document.getElementById('res-list-container');
+      const badge = document.getElementById('res-count-badge');
+      if (!container) return;
+
+      badge.innerText = `${resourceList.length} Files`;
+      container.innerHTML = '';
+
+      resourceList.forEach(res => {
+        const item = document.createElement('div');
+        item.style.display = 'flex';
+        item.style.justifyContent = 'space-between';
+        item.style.alignItems = 'center';
+        item.style.padding = '0.875rem 1.25rem';
+        item.style.border = '1px solid var(--border-color)';
+        item.style.borderRadius = '14px';
+        item.style.background = 'var(--bg-color)';
+        item.style.gap = '1rem';
+
+        item.innerHTML = `
+          <div style="display:flex; align-items:start; gap:0.75rem; text-align:left; min-width:0; flex-grow:1">
+            <div style="padding:0.4rem; background:rgba(244,63,94,0.1); color:var(--accent-rose); border-radius:10px; display:flex; align-items:center; justify-content:center; shrink-0">
+              <svg style="width:20px; height:20px" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/></svg>
+            </div>
+            <div style="min-width:0; flex-grow:1">
+              <span style="font-size:0.6rem; font-weight:800; color:var(--primary); background:var(--accent-bg-blue); padding:0.15rem 0.4rem; border-radius:50px; text-transform:uppercase">${res.category}</span>
+              <h4 style="font-size:0.8rem; font-weight:700; color:var(--text-main); margin-top:0.25rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">${res.title}</h4>
+              <p style="font-size:0.65rem; color:var(--text-muted); margin-top:0.1rem">File: ${res.fileName} (${res.size}) &middot; By: ${res.uploadedBy}</p>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:0.4rem; shrink-0">
+            <button class="btn-icon" onclick="downloadResourceFile('${res.id}')" title="Download File (${res.downloads} downloads)">
+              <svg style="width:16px; height:16px" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 17V3m0 14-4-4m4 4 4-4"/></svg>
+            </button>
+            ${res.uploadedBy === 'You (Student)' ? `
+              <button class="btn-icon" style="color:var(--accent-rose)" onclick="deleteResourceFile('${res.id}')" title="Delete file">
+                <svg style="width:16px; height:16px" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              </button>
+            ` : ''}
+          </div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    let selectedUploadFile = null;
+
+    function handleResourceFileChange() {
+      const fileInput = document.getElementById('res-upload-file');
+      const label = document.getElementById('res-file-label');
+      if (fileInput.files && fileInput.files[0]) {
+        selectedUploadFile = fileInput.files[0];
+        label.innerText = selectedUploadFile.name;
+      }
+    }
+
+    function handleResourceUpload(e) {
+      e.preventDefault();
+      const title = document.getElementById('res-upload-title').value;
+      const cat = document.getElementById('res-upload-cat').value;
+      const successMsg = document.getElementById('res-upload-success');
+
+      if (!title.trim() || !selectedUploadFile) return;
+
+      const newRes = {
+        id: `res-${Date.now()}`,
+        title: title,
+        category: cat,
+        fileName: selectedUploadFile.name,
+        size: `${(selectedUploadFile.size / (1024 * 1024)).toFixed(1)} MB`,
+        uploadedBy: 'You (Student)',
+        downloads: 0
+      };
+
+      resourceList.unshift(newRes);
+      renderResources();
+
+      // Reset form
+      document.getElementById('res-upload-title').value = '';
+      document.getElementById('res-upload-file').value = '';
+      document.getElementById('res-file-label').innerText = 'Select PDF Document';
+      selectedUploadFile = null;
+
+      successMsg.style.display = 'block';
+      setTimeout(() => {
+        successMsg.style.display = 'none';
+      }, 2000);
+    }
+
+    function downloadResourceFile(id) {
+      const res = resourceList.find(r => r.id === id);
+      if (res) {
+        res.downloads++;
+        renderResources();
+        
+        // Mock download triggers text blob
+        const el = document.createElement("a");
+        const file = new Blob([`Mock PDF content for: ${res.title}`], {type: 'text/plain'});
+        el.href = URL.createObjectURL(file);
+        el.download = res.fileName;
+        document.body.appendChild(el);
+        el.click();
+        document.body.removeChild(el);
+      }
+    }
+
+    function deleteResourceFile(id) {
+      resourceList = resourceList.filter(r => r.id !== id);
+      renderResources();
+    }
+
+    // Support Form submit
+    function handleMessageSubmit(e) {
+      e.preventDefault();
+      const txt = document.getElementById('contact-text');
+      const msg = document.getElementById('contact-sent-msg');
+      
+      msg.style.display = 'inline';
+      setTimeout(() => {
+        msg.style.display = 'none';
+        txt.value = '';
+      }, 2000);
+    }
+  </script>
+
+</body>
+</html>
